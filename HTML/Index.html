@@ -1,7 +1,79 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список книг</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2em;
+            color: #4caf50;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4caf50;
+            color: #fff;
+            font-size: 1.1em;
+        }
+
+        td {
+            border-top: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        /* Для адаптивности */
+        @media (max-width: 768px) {
+            table {
+                width: 90%;
+            }
+
+            th, td {
+                font-size: 0.9em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
 </head>
 <body>
     <h2>Список книг</h2>
@@ -26,8 +98,12 @@
             if (response.ok) {
                 const books = await response.json();
                 const rows = document.querySelector("tbody");
-                book
                 books.forEach(book => rows.appendChild(createRow(book)));
+            } else {
+                const errorMessage = document.createElement("div");
+                errorMessage.classList.add("error");
+                errorMessage.textContent = "Не удалось загрузить данные.";
+                document.body.insertBefore(errorMessage, document.querySelector("h2").nextSibling);
             }
         }
 

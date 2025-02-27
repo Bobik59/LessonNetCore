@@ -1,5 +1,6 @@
 using LessonNetCore.Models;
 using System;
+using System.Reflection.PortableExecutable;
 
 List<Book> books = new List<Book>()
 {
@@ -10,7 +11,6 @@ List<Book> books = new List<Book>()
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-// Отдача HTML-страницы со списком книг
 app.Map("/books", appBuilder =>
 {
     appBuilder.Run(async context =>
@@ -20,7 +20,24 @@ app.Map("/books", appBuilder =>
     });
 });
 
-// API: Список книг
+
+app.Map("/Add", appBuilder =>
+{
+    appBuilder.Run(async context =>
+    {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.SendFileAsync("HTML/Add.html");
+    });
+});
+
+app.MapPost("/api/add", (Book book) =>
+{
+    // Добавляем книгу в список
+    book.Id = Book.Count++;  // Пример логики для инкрементации ID
+    books.Add(book);  // Добавление книги в список
+    return Results.Ok(book);  // Возвращаем добавленную книгу
+});
+
 app.Map("/api/books", appBuilder =>
 {
     appBuilder.Run(async context =>
@@ -40,15 +57,10 @@ app.Map("/books/add", async (HttpContext context) =>
     newBook.Id = books.Any() ? books.Max(b => b.Id) + 1 : 1;
     books.Add(newBook);
 
-    // Редирект на страницу подтверждения или на страницу добавления
     context.Response.Redirect("/Add.html");
     return Results.Empty;
 });
 
-
-
-
-// API: Получение конкретной книги по Id
 app.Map("/api/book/{id:int}", async context =>
 {
     context.Response.ContentType = "text/html; charset=utf-8";
@@ -64,7 +76,6 @@ app.Map("/api/book/{id:int}", async context =>
     context.Response.StatusCode = 404;
 });
 
-// Маршрут для страницы, показывающей данные конкретной книги
 app.Map("/home/{id:int}", async context =>
 {
     context.Response.ContentType = "text/html; charset=utf-8";

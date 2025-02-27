@@ -1,54 +1,141 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8" />
-    <title>Добавление книги</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать книгу</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        h1 {
+            color: #4caf50;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h2>Добавить книгу</h2>
-    <form id="addBookForm">
+    <h1>Создать книгу</h1>
+    <form id="bookForm">
         <div>
             <label for="title">Название:</label>
-            <input type="text" id="title" name="title" required />
+            <input type="text" id="title" name="title" required>
         </div>
         <div>
             <label for="author">Автор:</label>
-            <input type="text" id="author" name="author" required />
+            <input type="text" id="author" name="author" required>
         </div>
         <div>
             <label for="description">Описание:</label>
             <textarea id="description" name="description" required></textarea>
         </div>
         <button type="submit">Добавить книгу</button>
+        <div id="message" class="message"></div>
     </form>
 
     <script>
-        document.getElementById("addBookForm").addEventListener("submit", async function(e) {
-            e.preventDefault(); // Отмена стандартного поведения формы
+        document.getElementById("bookForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-            // Собираем данные из формы
-            const formData = new FormData(this);
-            const data = {
-                title: formData.get("title"),
-                author: formData.get("author"),
-                description: formData.get("description")
+            const book = {
+                Title: document.getElementById("title").value.trim(),
+                Author: document.getElementById("author").value.trim(),
+                Description: document.getElementById("description").value.trim()
             };
 
-            // Отправляем POST-запрос на /books/add
-            const response = await fetch("/books/add", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
+            const messageDiv = document.getElementById("message");
+            messageDiv.textContent = "";
+            messageDiv.className = "message";
 
-            if (response.ok) {
-                const addedBook = await response.json();
-                alert(`Книга добавлена с Id: ${addedBook.id}`);
-                // Здесь можно обновить список книг или перенаправить пользователя
-            } else {
-                alert("Ошибка при добавлении книги");
+            try {
+                const response = await fetch("/api/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(book)
+                });
+
+                if (!response.ok) throw new Error("Ошибка при создании книги.");
+
+                const data = await response.json();
+                console.log("Success:", data);
+                messageDiv.textContent = "Книга успешно создана!";
+                messageDiv.classList.add("success");
+
+                // Очистка полей после успешного добавления
+                document.getElementById("bookForm").reset();
+            } catch (error) {
+                console.error("Error:", error);
+                messageDiv.textContent = "Ошибка при добавлении книги.";
+                messageDiv.classList.add("error");
             }
         });
     </script>
