@@ -26,6 +26,7 @@
             if (response.ok) {
                 const books = await response.json();
                 const rows = document.querySelector("tbody");
+                book
                 books.forEach(book => rows.appendChild(createRow(book)));
             }
         }

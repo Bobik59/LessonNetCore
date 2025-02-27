@@ -1,69 +1,74 @@
 using LessonNetCore.Models;
-using System.Reflection.PortableExecutable;
-
+using System;
 
 List<Book> books = new List<Book>()
 {
-    new Book()
-    {
-    Title = "ff",
-    Author = "ff",
-    Description = "ff",
-    },
-    new Book()
-    {
-    Title = "ff",
-    Author = "ff",
-    Description = "ff",
-    }
+    new Book() { Title = "Книга 1", Author = "Автор 1", Description = "Описание 1" },
+    new Book() { Title = "Книга 2", Author = "Автор 2", Description = "Описание 2" }
 };
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.Map("/books", (appBuilder) =>
+// Отдача HTML-страницы со списком книг
+app.Map("/books", appBuilder =>
 {
-    appBuilder.Run(async (context) =>
+    appBuilder.Run(async context =>
     {
         context.Response.ContentType = "text/html; charset=utf-8";
         await context.Response.SendFileAsync("HTML/index.html");
     });
 });
 
-app.Map("/api", (appBulder) =>
+// API: Список книг
+app.Map("/api/books", appBuilder =>
 {
-    appBulder.Map("/books", (appBuilder) =>
+    appBuilder.Run(async context =>
     {
-        appBuilder.Run(async (context) =>
-        {
-            await context.Response.WriteAsJsonAsync(books);
-        });
+        await context.Response.WriteAsJsonAsync(books);
     });
 });
 
-app.UseWhen(
-            (context) =>
-            {
-                return int.TryParse(context.Request.Path.ToString().Split("/").Last(), out _);
-            },
-            (app) =>
-            {
-                int? ID = null;
-                app.Use(async (context, next) =>
-                {
-                    ID = Convert.ToInt32(context.Request.Path.ToString().Split("/").Last());
+app.MapPost("/books/add", async (HttpContext context) =>
+{
+    var newBook = await context.Request.ReadFromJsonAsync<Book>();
+    if (newBook == null)
+    {
+        return Results.BadRequest("Неверные данные");
+    }
 
-                    var book = books.Find(b => b.Id == ID);
-                    if (book != null)
-                    {
-                        app.Run(async (context) =>
-                        {
-                            await context.Response.WriteAsJsonAsync(book);
-                        });
-                    }
-                    await next();
-                });
-            }
-        );
+    newBook.Id = books.Any() ? books.Max(b => b.Id) + 1 : 1;
+    books.Add(newBook);
+
+    // Редирект на страницу подтверждения или на страницу добавления
+    context.Response.Redirect("/Add.html");
+    return Results.Empty;
+});
+
+
+
+
+// API: Получение конкретной книги по Id
+app.Map("/api/book/{id:int}", async context =>
+{
+    context.Response.ContentType = "text/html; charset=utf-8";
+    if (int.TryParse(context.Request.RouteValues["id"]?.ToString(), out int id))
+    {
+        var book = books.FirstOrDefault(b => b.Id == id);
+        if (book != null)
+        {
+            await context.Response.WriteAsJsonAsync(book);
+            return;
+        }
+    }
+    context.Response.StatusCode = 404;
+});
+
+// Маршрут для страницы, показывающей данные конкретной книги
+app.Map("/home/{id:int}", async context =>
+{
+    context.Response.ContentType = "text/html; charset=utf-8";
+    await context.Response.SendFileAsync("HTML/book.html");
+});
 
 app.Run();
