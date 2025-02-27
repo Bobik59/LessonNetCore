@@ -29,7 +29,7 @@ app.Map("/api/books", appBuilder =>
     });
 });
 
-app.MapPost("/books/add", async (HttpContext context) =>
+app.Map("/books/add", async (HttpContext context) =>
 {
     var newBook = await context.Request.ReadFromJsonAsync<Book>();
     if (newBook == null)
