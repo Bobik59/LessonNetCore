@@ -4,19 +4,48 @@
     <meta charset="utf-8" />
 </head>
 <body>
-    <h2>
-        Список книг
-    </h2>
+    <h2>Список книг</h2>
 
     <table>
         <thead>
-            <tr><th>Название</tr><th>Автор</th></tr>
+            <tr>
+                <th>Название</th>
+                <th>Автор</th>
+            </tr>
         </thead>
-    </table>>
-
+        <tbody>
+        </tbody>
+    </table>
 
     <script>
+        async function getBooks() {
+            const response = await fetch("/api/books", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const books = await response.json();
+                const rows = document.querySelector("tbody");
+                books.forEach(book => rows.appendChild(createRow(book)));
+            }
+        }
 
+        function createRow(book) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", book.id);
+
+            const nameTd = document.createElement("td");
+            nameTd.textContent = book.title;
+            tr.appendChild(nameTd);
+
+            const authorTd = document.createElement("td");
+            authorTd.textContent = book.author;
+            tr.appendChild(authorTd);
+
+            return tr;
+        }
+
+        getBooks();
     </script>
 </body>
 </html>
