@@ -5,15 +5,15 @@ List<Book> books = new List<Book>()
 {
     new Book()
     {
-    Title = "",
-    Author = "",
-    Description = "",
+    Title = "ff",
+    Author = "ff",
+    Description = "ff",
     },
     new Book()
     {
-    Title = "",
-    Author = "",
-    Description = "",
+    Title = "ff",
+    Author = "ff",
+    Description = "ff",
     }
 };
 
@@ -24,7 +24,7 @@ app.Map("/books", (appBuilder) =>
 {
     appBuilder.Run(async (context) =>
     {
-        context.Response.ContentType = "text"
+        context.Response.ContentType = "text/html"
         await context.Response.SendFileAsync("HTML/index.html");
     });
 });
