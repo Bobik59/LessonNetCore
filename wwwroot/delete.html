@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Удаление игр</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .game-item {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список игр для удаления</h1>
+    <ul id="gamesList"></ul>
+
+    <script>
+        async function loadGames() {
+            try {
+                const response = await fetch('/api/gamesForDelete');
+                const games = await response.json();
+                const gamesList = document.getElementById('gamesList');
+                gamesList.innerHTML = '';
+                games.forEach(game => {
+                    const li = document.createElement('li');
+                    li.className = 'game-item';
+                    li.textContent = `${game.name} - ${game.author}`;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Удалить';
+                    deleteButton.onclick = async () => {
+                        if (confirm(`Удалить игру "${game.name}"?`)) {
+                            const res = await fetch(`/api/delete/${game.id}`, {
+                                method: 'POST'
+                            });
+                            if (res.ok) {
+                                alert('Игра удалена');
+                                loadGames();
+                            } else {
+                                alert('Ошибка при удалении');
+                            }
+                        }
+                    };
+
+                    li.appendChild(deleteButton);
+                    gamesList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки списка игр:', error);
+            }
+        }
+
+        window.onload = loadGames;
+    </script>
+</body>
+</html>
