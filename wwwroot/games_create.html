@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Game</title>
+</head>
+<body>
+    <h1>Create New Game</h1>
+    <form id="createGameForm">
+        <label for="name">Game Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="genre">Genre:</label><br>
+        <input type="text" id="genre" name="genre" required><br><br>
+
+        <label for="author">Author:</label><br>
+        <input type="text" id="author" name="author" required><br><br>
+
+        <label for="picturePath">Picture:</label><br>
+        <input type="file" id="picturePath" name="picturePath" accept="image/*"><br><br>
+
+        <button type="submit">Create Game</button>
+    </form>
+
+    <script>
+        document.getElementById('createGameForm').addEventListener('submit', async function (event) {
+            event.preventDefault();  // Отменяем стандартное поведение формы
+
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                genre: formData.get('genre'),
+                author: formData.get('author'),
+                picture: formData.get('picturePath') // Получаем файл изображения
+            };
+
+            try {
+                // Создаем объект FormData для отправки данных, включая файл
+                const response = await fetch('/api/Games/Create', {
+                    method: 'POST',
+                    body: formData  // Отправляем formData, которая включает файл
+                });
+
+                if (response.ok) {
+                    alert('Game created successfully!');
+                } else {
+                    const errorMessage = await response.text();
+                    alert('Error: ' + errorMessage);
+                }
+            } catch (error) {
+                alert('Failed to create game: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
