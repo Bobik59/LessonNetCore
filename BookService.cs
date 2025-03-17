@@ -26,7 +26,7 @@ namespace LessonNetCore
             foreach (var book in books)
             {
                 DisplayBookInfo(book);
-                _outputService.Write("\n"); // Разделитель при выводе
+                _outputService.Write("\n");
             }
         }
     }
