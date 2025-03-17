@@ -11,11 +11,12 @@ namespace LessonNetCore.ServiceReader.Infrastructure
         {
             _separatorCount = separatorCount;
         }
-
+        
         public List<Book> ReadFromFile(string filePath)
         {
             var books = new List<Book>();
             var lines = File.ReadAllLines(filePath).ToList();
+            
 
             List<string> currentBookData = new List<string>();
             int emptyLineCount = 0;

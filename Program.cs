@@ -7,7 +7,7 @@ using LessonNetCore;
 string filePath = "books.txt";
 
 IOutputService consoleOutput = new ConsoleOutputService();
-IBookReader bookReader = new FlexibleBookReader(4);
+IBookReader bookReader = new FlexibleBookReader(2);
 BookService bookService = new BookService(consoleOutput, bookReader);
 bookService.LoadAndDisplayBooks(filePath);
 
