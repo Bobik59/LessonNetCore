@@ -15,7 +15,7 @@ PersonService personService = new PersonService(fileReader, consoleService);
 
 personService.LoadAndPrintPersons(filePath);
 
-List<Person> persons = fileReader.ReadFromFile(filePath);//
+List<Person> persons = fileReader.ReadFromFile(filePath);/
 foreach (var person in persons)
 {
     consoleService.Write(person.ToString());
