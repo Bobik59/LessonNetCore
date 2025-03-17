@@ -1,23 +1,25 @@
 ﻿namespace LessonNetCore.Entity
 {
-    public class Person
+    public class Book
     {
-        public string FirstName { get; }
-        public string LastName { get; }
-        public DateTime DateOfBirth { get; }
-        public string OtherInfo { get; }
+        public string Title { get; }
+        public string Author { get; }
+        public string Genre { get; }
+        public int Year { get; }
+        public string AdditionalInfo { get; }
 
-        public Person(string firstName, string lastName, DateTime dateOfBirth, string otherInfo = "")
+        public Book(string title, string author, string genre, int year, string additionalInfo = "")
         {
-            FirstName = firstName;
-            LastName = lastName;
-            DateOfBirth = dateOfBirth;
-            OtherInfo = otherInfo;
+            Title = title;
+            Author = author;
+            Genre = genre;
+            Year = year;
+            AdditionalInfo = additionalInfo;
         }
 
         public override string ToString()
         {
-            return $"Имя: {FirstName}\nФамилия: {LastName}\nДата рождения: {DateOfBirth:dd.MM.yyyy}\nДоп. информация: {OtherInfo}";
+            return $"Название книги: {Title}\nАвтор: {Author}\nСтиль: {Genre}\nГод издания: {Year}\nДоп. информация: {AdditionalInfo}";
         }
     }
 

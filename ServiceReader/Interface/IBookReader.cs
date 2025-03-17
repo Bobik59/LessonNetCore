@@ -2,8 +2,8 @@
 
 namespace LessonNetCore.ServiceReader.Interface
 {
-    public interface IFileReader
+    public interface IBookReader
     {
-        List<Person> ReadFromFile(string filePath);
+        List<Book> ReadFromFile(string filePath);
     }
 }
