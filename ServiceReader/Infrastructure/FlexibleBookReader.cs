@@ -5,6 +5,13 @@ namespace LessonNetCore.ServiceReader.Infrastructure
 {
     public class FlexibleBookReader : IBookReader
     {
+        private readonly int _separatorCount;
+
+        public FlexibleBookReader(int separatorCount)
+        {
+            _separatorCount = separatorCount;
+        }
+
         public List<Book> ReadFromFile(string filePath)
         {
             var books = new List<Book>();
@@ -12,7 +19,6 @@ namespace LessonNetCore.ServiceReader.Infrastructure
 
             List<string> currentBookData = new List<string>();
             int emptyLineCount = 0;
-            int detectedSeparator = -1;
 
             foreach (var line in lines)
             {
@@ -20,22 +26,20 @@ namespace LessonNetCore.ServiceReader.Infrastructure
                 {
                     emptyLineCount++;
 
-                    if (currentBookData.Count > 0 && detectedSeparator == -1)
+                    if (emptyLineCount >= _separatorCount)
                     {
-                        detectedSeparator = emptyLineCount;
-                    }
-
-                    if (detectedSeparator != -1 && emptyLineCount >= detectedSeparator)
-                    {
-                        var book = ParseBook(currentBookData);
-                        if (book != null)
-                            books.Add(book);
-                        currentBookData.Clear();
+                        if (currentBookData.Count > 0)
+                        {
+                            var book = ParseBook(currentBookData);
+                            if (book != null)
+                                books.Add(book);
+                        }
+                        currentBookData.Clear(); 
+                        emptyLineCount = 0;
                     }
                 }
                 else
                 {
-                    emptyLineCount = 0;
                     currentBookData.Add(line);
                 }
             }
@@ -72,4 +76,5 @@ namespace LessonNetCore.ServiceReader.Infrastructure
             return new Book(title, author, genre, year, additionalInfo);
         }
     }
+
 }
