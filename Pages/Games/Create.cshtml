@@ -1,0 +1,36 @@
+﻿@page
+@model LessonNetCore.Pages.Games.CreateModel
+@{
+    ViewData["Title"] = "Добавить игру";
+}
+
+<h1>Добавить игру</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="NewGame.Name"></label>
+        <input asp-for="NewGame.Name" class="form-control" />
+        <span asp-validation-for="NewGame.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewGame.Genre"></label>
+        <input asp-for="NewGame.Genre" class="form-control" />
+        <span asp-validation-for="NewGame.Genre" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewGame.Author"></label>
+        <input asp-for="NewGame.Author" class="form-control" />
+        <span asp-validation-for="NewGame.Author" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NewGame.ReleaseDate"></label>
+        <input asp-for="NewGame.ReleaseDate" type="date" class="form-control" />
+        <span asp-validation-for="NewGame.ReleaseDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Создать</button>
+    <a asp-page="./Index" class="btn btn-secondary">Отмена</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
