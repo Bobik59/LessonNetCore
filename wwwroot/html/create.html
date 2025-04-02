@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание игры</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Создание новой игры</h1>
+    </header>
+
+    <form id="gameForm">
+        <label>Название:</label>
+        <input type="text" id="name" required />
+
+        <label>Жанр:</label>
+        <input type="text" id="genre" required />
+
+        <label>Автор:</label>
+        <input type="text" id="author" required />
+
+        <label>Описание:</label>
+        <textarea id="description"></textarea>
+
+        <label>Изображение:</label>
+        <input type="file" id="image" accept="image/*" />
+
+        <button type="submit">Создать</button>
+    </form>
+
+    <script>
+        document.getElementById("gameForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append("name", document.getElementById("name").value);
+            formData.append("genre", document.getElementById("genre").value);
+            formData.append("author", document.getElementById("author").value);
+            formData.append("description", document.getElementById("description").value);
+            formData.append("image", document.getElementById("image").files[0]);
+
+            const response = await fetch("/api/game/create", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            alert(response.ok ? "Игра создана!" : "Ошибка: " + result.detail);
+        });
+    </script>
+</body>
+</html>

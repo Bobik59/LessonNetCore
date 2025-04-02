@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Все игры</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Games Store</h1>
+    </header>
+    <nav>
+        <button onclick="location.href='/'">Главная страница</button>
+        <button onclick="location.href='/games'">Все игры</button>
+        <button onclick="location.href='/game/create'">Новая игра</button>
+    </nav>
+
+    <div class="main-content">
+        <h1>Все игры</h1>
+
+        <div class="filter-container">
+            <label for="authorFilter">Автор:</label>
+            <input type="text" id="authorFilter" placeholder="Введите автора" />
+
+            <label for="genreFilter">Жанр:</label>
+            <input type="text" id="genreFilter" placeholder="Введите жанр" />
+
+            <button id="applyFilters">Применить фильтры</button>
+        </div>
+
+        <div class="games-container" id="gamesContainer">
+            <!-- Здесь будут динамически добавляться карточки игр -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Все права защищены.</p>
+    </footer>
+
+    <script>
+        // Функция для получения списка игр с фильтрами
+        async function fetchGames(author = '', genre = '') {
+            try {
+                const response = await fetch(`/api/games?author=${encodeURIComponent(author)}&genre=${encodeURIComponent(genre)}`);
+                const games = await response.json();
+                displayGames(games);
+            } catch (error) {
+                console.error("Ошибка при загрузке игр:", error);
+            }
+        }
+
+        // Функция для отображения карточек игр на странице
+        function displayGames(games) {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '';
+
+            games.forEach(game => {
+                // Создаём ссылку-карточку для игры
+                const gameCard = document.createElement('a');
+                gameCard.className = 'game-card';
+                gameCard.href = `/game/${game.id}`;
+                gameCard.innerHTML = `
+                        <img src="${game.imagePath}" alt="Изображение игры" />
+                        <div class="game-card-info">
+                            <h2>${game.name}</h2>
+                            <p><strong>Описание:</strong> <span>${game.description || 'Нет описания.'}</span></p>
+                            <p><strong>Жанр:</strong> <span>${game.genre || 'Не указано.'}</span></p>
+                            <p><strong>Автор:</strong> <span>${game.author || 'Неизвестен.'}</span></p>
+                        </div>
+                    `;
+                container.appendChild(gameCard);
+            });
+        }
+
+        // Обработчик фильтрации игр
+        function applyFilters() {
+            const author = document.getElementById('authorFilter').value;
+            const genre = document.getElementById('genreFilter').value;
+            fetchGames(author, genre);
+        }
+
+        document.getElementById('applyFilters').addEventListener('click', applyFilters);
+
+        // Первоначальная загрузка игр
+        fetchGames();
+    </script>
+</body>
+</html>
