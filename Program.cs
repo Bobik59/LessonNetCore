@@ -92,6 +92,11 @@ app.MapPut("/api/game/{id:int}/update", async (HttpContext context, int id, Appl
     return Results.Json(game);
 });
 
+app.MapGet("/game/{id:int}", (HttpContext context) =>
+{
+    var path = Path.Combine(context.RequestServices.GetRequiredService<IWebHostEnvironment>().WebRootPath, "html", "game.html");
+    return Results.File(path, "text/html");
+});
 
 app.MapDelete("/api/game/{id:int}/delete", async (int id, ApplicationDbContext db) =>
 {
